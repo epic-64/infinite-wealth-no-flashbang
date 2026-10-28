@@ -28,6 +28,8 @@ If the game isn't found, pass its folder (the one that contains `runtime`) with
 
 After a game update or Steam's "Verify integrity of game files", run the patcher again.
 
+Want to build it yourself or help out? See [CONTRIBUTING.md](https://github.com/epic-64/infinite-wealth-no-flashbang/blob/main/CONTRIBUTING.md).
+
 ## License
 
 [MIT](LICENSE). This is an unofficial mod, not affiliated with RGG Studio or SEGA.
