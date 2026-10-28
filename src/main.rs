@@ -187,6 +187,12 @@ const USAGE: &str = "usage: no-flashbang [patch|restore|scan] [--game-dir DIR]
   scan     show what would be patched, change nothing";
 
 fn main() {
+    let code = real_main();
+    pause_if_own_console();
+    std::process::exit(code);
+}
+
+fn real_main() -> i32 {
     let mut mode = None;
     let mut game = None;
     let mut args = std::env::args().skip(1);
@@ -195,25 +201,45 @@ fn main() {
             "--game-dir" => game = args.next().map(PathBuf::from),
             "-h" | "--help" => {
                 println!("{USAGE}");
-                return;
+                return 0;
             }
-            // A bare folder also works, e.g. dragging the game folder onto the exe.
             _ if mode.is_none() && ["patch", "restore", "scan"].contains(&arg.as_str()) => mode = Some(arg),
+            // A bare folder also works, e.g. dragging the game folder onto the exe.
             _ if game.is_none() => game = Some(PathBuf::from(arg)),
             _ => {
                 eprintln!("{USAGE}");
-                std::process::exit(2);
+                return 2;
             }
         }
     }
     let Some(game) = game.or_else(steam::find_game_dir) else {
         eprintln!("Could not find Like a Dragon: Infinite Wealth in any Steam library.");
         eprintln!("Pass its folder with --game-dir.");
-        std::process::exit(1);
+        return 1;
     };
     println!("Game folder: {}", game.display());
     if let Err(e) = run(mode.as_deref().unwrap_or("patch"), &game) {
         eprintln!("error: {e}");
-        std::process::exit(1);
+        return 1;
+    }
+    0
+}
+
+/// When started by double-click, Windows gives the program its own console window,
+/// which closes as soon as it exits. Keep it open so the result can be read.
+#[cfg(windows)]
+fn pause_if_own_console() {
+    unsafe extern "system" {
+        fn GetConsoleProcessList(list: *mut u32, count: u32) -> u32;
+    }
+    let mut pids = [0u32; 2];
+    // Only this process attached means nobody else (no shell) owns the window.
+    if unsafe { GetConsoleProcessList(pids.as_mut_ptr(), 2) } == 1 {
+        println!("
+Press Enter to close.");
+        let _ = std::io::stdin().read_line(&mut String::new());
     }
 }
+
+#[cfg(not(windows))]
+fn pause_if_own_console() {}

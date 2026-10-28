@@ -1,0 +1,9 @@
+# Release binaries must run on machines without Rust or extra runtimes.
+
+[target.x86_64-pc-windows-msvc]
+# Link the C runtime statically, so no Visual C++ redistributable is needed.
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.x86_64-unknown-linux-musl]
+# Fully static Linux binary: runs on any distro and on the Steam Deck.
+rustflags = ["-C", "target-feature=+crt-static"]

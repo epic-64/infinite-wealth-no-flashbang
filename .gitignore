@@ -11,3 +11,6 @@ no_flashbang_backup/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Release zips (scripts/distribute.sh)
+/dist
