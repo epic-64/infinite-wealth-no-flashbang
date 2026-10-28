@@ -3,9 +3,8 @@
 Removes the full-screen white flashes from Like a Dragon: Infinite Wealth cutscenes,
 including the three flashes per Sujimon in every gacha pull.
 
-- Short white flashes (10 frames or less) are removed.
-- Longer white fades in scene transitions fade to black instead.
-- Only the cutscene scripts change.
+- Short white flashes (10 frames or less) are removed
+- Longer white fades in scene transitions fade to black instead
 
 ## Install
 
